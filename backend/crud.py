@@ -24,8 +24,8 @@ def get_todo_info_by_id(session: Session, _id: int) -> TodoInfo:
 # Function to add a new todo info to the database
 def create_todo(session: Session, todo_info: CreateAndUpdateTodo) -> TodoInfo:
     todo_details = session.query(TodoInfo).filter(TodoInfo.item == todo_info.item)
-    if todo_details is not None:
-        raise TodoInfoAlreadyExistError
+    # if todo_details is not None:
+    #     raise TodoInfoAlreadyExistError
 
     new_todo_info = TodoInfo(**todo_info.dict())
     session.add(new_todo_info)

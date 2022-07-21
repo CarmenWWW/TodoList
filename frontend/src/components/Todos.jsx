@@ -12,10 +12,19 @@ import {
     ModalFooter,
     ModalHeader,
     ModalOverlay,
-    Stack,
     Text,
     useDisclosure
 } from "@chakra-ui/react";
+
+
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import Checkbox from '@material-ui/core/Checkbox';
+import IconButton from '@material-ui/core/IconButton';
+import DeleteIcon from '@material-ui/icons/Delete';
+import UpdateIcon from '@material-ui/icons/Update';
+import TextField from '@material-ui/core/TextField';
 
 const TodosContext = React.createContext({
   todos: [], fetchTodos: () => {}
@@ -44,15 +53,15 @@ function AddTodo() {
   
     return (
         <form onSubmit={handleSubmit}>
-            <InputGroup size="md">
-            <Input
-            pr="4.5rem"
-            type="text"
-            placeholder="Add a todo item"
-            aria-label="Add a todo item"
-            onChange={handleInput}
+            <TextField
+                variant="outlined"
+                placeholder="Add todo"
+                margin="normal"
+                direction="column"
+                justify="center"
+                alignItems="center"
+                onChange={handleInput}
             />
-            </InputGroup>
         </form>
     )
 }
@@ -74,7 +83,12 @@ function UpdateTodo({item, id}) {
   
     return (
         <>
-        <Button h="1.5rem" size="sm" onClick={onOpen}>Update Todo</Button>
+         <IconButton
+            aria-label="Update"
+            onClick={onOpen}
+          >
+            <UpdateIcon />
+          </IconButton>
         <Modal isOpen={isOpen} onClose={onClose}>
             <ModalOverlay/>
             <ModalContent>
@@ -117,7 +131,14 @@ function DeleteTodo({id}) {
     }
   
     return (
-        <Button h="1.5rem" size="sm" onClick={deleteTodo}>Delete Todo</Button>
+        <IconButton
+            aria-label="Delete"
+            onClick={() => {
+              deleteTodo(id);
+            }}
+          >
+            <DeleteIcon />
+          </IconButton>
     )
 }
 
@@ -125,15 +146,12 @@ function DeleteTodo({id}) {
 function TodoHelper({item, id, fetchTodos}) {
     return (
       <Box p={1} shadow="sm">
-        <Flex justify="space-between">
             <Text mt={4} as="div">
-                {item}
                 <Flex align="end">
                 <UpdateTodo item={item} id={id} fetchTodos={fetchTodos}/>
                 <DeleteTodo id={id} fetchTodos={fetchTodos}/>
                 </Flex>
             </Text>
-        </Flex>
       </Box>
     )
 }
@@ -149,14 +167,18 @@ export default function Todos() {
     fetchTodos()
   }, [])
   return (
-    <TodosContext.Provider value={{todos, fetchTodos}}>
-        <AddTodo />
-        <Stack spacing={5}>
+    <List>
+        <TodosContext.Provider value={{todos, fetchTodos}}>
+            <AddTodo />
             {todos.map((todo) => (
-            <TodoHelper item={todo.item} id={todo.id} fetchTodos={fetchTodos} />
-            
+                <ListItem dense button>
+                    <Checkbox tabIndex={-1} disableRipple />
+                    <ListItemText primary = {todo.item} />
+                    <TodoHelper item={todo.item} id={todo.id} fetchTodos={fetchTodos} />
+                    
+                </ListItem>
             ))}
-        </Stack>
-    </TodosContext.Provider>
+        </TodosContext.Provider>
+    </List>
   )
 }
